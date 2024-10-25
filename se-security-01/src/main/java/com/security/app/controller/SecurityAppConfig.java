@@ -2,8 +2,10 @@ package com.security.app.controller;
 
 import java.util.ArrayList;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,31 +15,46 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.DefaultSecurityFilterChain;
+import org.springframework.security.web.SecurityFilterChain;
      
 @Configuration
 @EnableWebSecurity(debug = true)
 public class SecurityAppConfig {
+	
+	@Autowired
+	private HttpSecurity httpSecurity;
 	
 	
 	@Bean
 	public InMemoryUserDetailsManager setUpUsers() {
 		 UserDetails pranayuser = User 
 				.withUsername("pranay")
-				.password("$2a$10$wTp5pQPhxgo9F9V0XNHQgePqHO9SitpaEAndf5SLrVwaFHy7Xj5vO")
+				.password("password")
 				.roles("Admin","visitor")
 				.build();
 		 
 		 UserDetails georgeuser = User
 				 .withUsername("george")
-				 .password("$2a$10$MVoxdVxjPYNL/RokzcmsuevUajzgq/etgow0BJwNuSlJbCzkgHg.u")
+				 .password("password")
 				 .roles("customer","visitor")
 				 .build();
 		 return new InMemoryUserDetailsManager(pranayuser,georgeuser);	
 	}
 	
+	
+	@Bean
+	public SecurityFilterChain settingUpCustomFilterChain() throws Exception {
+		
+		//return new DefaultSecurityFilterChain(null, null)
+		
+		return httpSecurity.build();
+	}
+	
 	@Bean
 	PasswordEncoder passwordencoder() {
-		return new BCryptPasswordEncoder();
+		
+		return NoOpPasswordEncoder.getInstance();
 	}
 	
 	
